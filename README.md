@@ -43,8 +43,3 @@ Plik `wikifinder.properties` - plik z ustawieniami. Znajdują się w nim dwa par
 
 Póki co dokonuje tylko stemizacji słów w tytule strony i zwraca wynik w strukturze JSON.
 
-### TODO
-
-- [ ] do zrobienia 1
-- [ ] do zrobienia 2
-- [ ] ...
