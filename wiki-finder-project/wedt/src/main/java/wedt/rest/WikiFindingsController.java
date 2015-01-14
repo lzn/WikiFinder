@@ -28,6 +28,7 @@ public class WikiFindingsController {
         // TODO: search keywords in Wikipedia
 
         return writeToJson(url, keywords);
+
         // TODO: write Wikipedia matches instead of keywords
     }
 
@@ -42,8 +43,7 @@ public class WikiFindingsController {
 
         LOG.info("page text: " + html.getText());
 
-        return new Keywords().find(html.getTitle());
-        // TODO: find keywords in text, not in page title
+        return new Keywords(html.getText()).find(5);
     }
 
     private WikiFindings writeToJson(String url, List<String> keywords) {

@@ -33,7 +33,7 @@ public class Html {
 
     public List<String> getByTag(String tag) {
         List<String> result = new LinkedList<>();
-        for (Element el: parsed.getElementsByTag(tag)) {
+        for (Element el : parsed.getElementsByTag(tag)) {
             result.add(el.text());
         }
         return result;
