@@ -15,25 +15,33 @@ public class Keywords {
     private static final String DELIM = "!?.,-–()«|0123456789+„”/»=;\"*<> ";
     private static final PolishStemmer STEMMER = new PolishStemmer();
     private static final PolishMostFrequent POLISH_FREQUENT = new PolishMostFrequent(5000);
+    public static final String WWW_DOT = "www.";
 
     private final String text;
+    private final String pageName;
 
-    public Keywords(String text) {
+    public Keywords(String text, String url) {
         LOG.info("text:\n" + text);
         this.text = text;
+        this.pageName = getPageName(url);
+    }
+
+    private String getPageName(String url) {
+        String afterWWW = url.substring(url.indexOf(WWW_DOT) + WWW_DOT.length());
+        return afterWWW.substring(0, afterWWW.indexOf("/"));
     }
 
     public List<String> find(int n) {
         List<PotentialKeyword> candidates = stemsWithOccurrences();
-        filterPolishFrequent(candidates);
+        filterPolishFrequentAndPageTitle(candidates);
         Collections.sort(candidates);
-        return pickTheBest(candidates, n);
+        return pickNBest(candidates, n);
     }
 
-    private List<String> pickTheBest(List<PotentialKeyword> candidates, int n) {
-        LOG.info("sorted:\n" + candidates);
+    private List<String> pickNBest(List<PotentialKeyword> candidates, int n) {
+        LOG.info("all found keywords sorted:\n" + candidates);
         List<String> ans = new LinkedList<>();
-        for (PotentialKeyword k : candidates.subList(0, n + 1)) {
+        for (PotentialKeyword k : candidates.subList(0, n)) {
             ans.add(k.stem);
         }
         return ans;
@@ -47,14 +55,16 @@ public class Keywords {
         StringTokenizer tokenizer = new StringTokenizer(text, DELIM);
         while (tokenizer.hasMoreTokens()) {
             String word = tokenizer.nextToken().toLowerCase();
-            List<WordData> polishStems = STEMMER.lookup(word);
-            // TODO: check English stems and treat as unstemmable
+            List<WordData> polishLemma = STEMMER.lookup(word);
+            // TODO:
+            // don't stem English, use e.g. a spell checker
+            // to determine if word is English
 
-            if (polishStems.isEmpty()) {
+            if (polishLemma.isEmpty()) {
                 append(word, unstemmableInRow);
             } else {
                 stash(unstemmableInRow, potentialKeywords);
-                String firstStem = polishStems.get(0).getStem().toString();
+                String firstStem = polishLemma.get(0).getStem().toString();
                 seen(firstStem, potentialKeywords);
             }
         }
@@ -63,7 +73,6 @@ public class Keywords {
         List<PotentialKeyword> formattedAnswer = new ArrayList<>();
         formattedAnswer.addAll(potentialKeywords.values());
         return formattedAnswer;
-        // TODO: return potential keywords to contain occurrences
     }
 
     private void append(String word, StringBuilder unstemmableInRow) {
@@ -112,11 +121,13 @@ public class Keywords {
         }
     }
 
-    private void filterPolishFrequent(List<PotentialKeyword> sortItOut) {
-        Iterator<PotentialKeyword> iterator = sortItOut.iterator();
+    private void filterPolishFrequentAndPageTitle(List<PotentialKeyword> candidates) {
+        Iterator<PotentialKeyword> iterator = candidates.iterator();
         while (iterator.hasNext()) {
             PotentialKeyword k = iterator.next();
-            if (POLISH_FREQUENT.contains(k.stem)) iterator.remove();
+            if (POLISH_FREQUENT.contains(k.stem) || pageName.contains(k.stem)) {
+                iterator.remove();
+            }
         }
     }
 }

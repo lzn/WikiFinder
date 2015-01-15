@@ -32,8 +32,11 @@ public class PolishMostFrequent {
             LOG.warn("Could not load page");
             ans = Collections.emptyList();
         }
-        FIVE_THOUSAND_ORDERED = ans;
+        FIVE_THOUSAND_ORDERED = new ArrayList<>();
+        FIVE_THOUSAND_ORDERED.addAll(ans);
     }
+
+    private final static String[] TUNING = {"komentarz", "skomentować", "komentować"};
 
     private final Set<String> set;
 
@@ -41,7 +44,9 @@ public class PolishMostFrequent {
         if (number > FIVE_THOUSAND_ORDERED.size()) {
             throw new IllegalArgumentException("max = " + (FIVE_THOUSAND_ORDERED.size()));
         }
-        this.set = new HashSet<>(FIVE_THOUSAND_ORDERED.subList(0, number));
+        List<String> include = FIVE_THOUSAND_ORDERED.subList(0, number);
+        include.addAll(Arrays.asList(TUNING));
+        this.set = new HashSet<>(include);
     }
 
     public boolean contains(String word) {
