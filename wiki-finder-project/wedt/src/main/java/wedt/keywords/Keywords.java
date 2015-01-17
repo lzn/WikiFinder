@@ -15,7 +15,7 @@ public class Keywords {
     private static final String DELIM = "!?.,-–()«|0123456789+„”/»=;\"*<> ";
     private static final PolishStemmer STEMMER = new PolishStemmer();
     private static final PolishMostFrequent POLISH_FREQUENT = new PolishMostFrequent(5000);
-    public static final String WWW_DOT = "www.";
+    public static final String WWW_DOT = "//";
 
     private final String text;
     private final String pageName;
@@ -24,6 +24,7 @@ public class Keywords {
         LOG.info("text:\n" + text);
         this.text = text;
         this.pageName = getPageName(url);
+        LOG.info("page name = " + pageName);
     }
 
     private String getPageName(String url) {

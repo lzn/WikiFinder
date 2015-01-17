@@ -42,7 +42,4 @@ Plik `wikifinder.properties` - plik z ustawieniami. Znajdują się w nim dwa par
     ```
 
 Póki co dokonuje tylko stemizacji słów w tytule strony i zwraca wynik w strukturze JSON.
-<<<<<<< HEAD
 
-=======
->>>>>>> 6f64c1354060fdc8a6f37f739d5347f6d445b8fb

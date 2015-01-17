@@ -36,7 +36,8 @@ public class PolishMostFrequent {
         FIVE_THOUSAND_ORDERED.addAll(ans);
     }
 
-    private final static String[] TUNING = {"komentarz", "skomentować", "komentować"};
+    private final static String[] TUNING =
+            {"komentarz", "skomentować", "komentować", "blog", "www", "pl"};
 
     private final Set<String> set;
 
