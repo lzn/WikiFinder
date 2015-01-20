@@ -1,10 +1,7 @@
 package wedt.finder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,9 +15,6 @@ import pw.elka.wedt.wikifinder.config.ConfigManager;
 import pw.elka.wedt.wikifinder.searcher.LuceneIndexSearcher;
 
 
-/**
- * @author kjrz
- */
 public class ActualWikiFinder implements WikiFinder {
 	private static final Logger LOG = Logger.getLogger(ActualFinding.class);
     
@@ -28,15 +22,15 @@ public class ActualWikiFinder implements WikiFinder {
         // TODO: representation of a finding by fields + getters
     	
     	private final Integer level;
-    	private final ArrayList<String> tags;
-    	public ActualFinding(Integer level, ArrayList<String> tags) {
+    	private final List<String> tags;
+    	public ActualFinding(Integer level, List<String> tags) {
 			 this.level = level;
 			 this.tags = tags;
 		}
 		public Integer getLevel() {
 			return level;
 		}
-		public ArrayList<String> getTags() {
+		public List<String> getTags() {
 			return tags;
 		}
     }
@@ -86,28 +80,50 @@ public class ActualWikiFinder implements WikiFinder {
 					}
 				}
 			}
-			
-			Iterator<Entry<Integer, HashMap<String, Integer>>> iterator = results.entrySet().iterator();
-			while(iterator.hasNext()){
-				Entry<Integer, HashMap<String, Integer>> next = iterator.next();
-				Integer level = next.getKey();
-				
-				//TODO: dorobic sortowanie
-				ArrayList<String> tags;// = new ArrayList<String>();
-				//HashMap<String, Integer> value = next.getValue();
-		//		Iterator<String> valueIt = value.keySet().iterator();
-				tags = new ArrayList<String>(next.getValue().keySet());
-								
-				finding.add(new ActualFinding(level, tags));				
+
+			for (Entry<Integer, HashMap<String, Integer>> entry : results.entrySet()) {
+				Integer level = entry.getKey();
+				List<String> tags = pick(entry.getValue(), 10);
+				finding.add(new ActualFinding(level, tags));
 			}
 			
 		} catch (IOException | ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e);
+			// TODO: ?
 		}
     
         return finding;
     }
-    
-    
+
+	/**
+	 * http://stackoverflow.com/questions/109383/how-to-sort-a-mapkey-value-on-the-values-in-java
+	 */
+	private List<String> pick(HashMap<String, Integer> map, int n) {
+		ValueComparator bvc =  new ValueComparator(map);
+		TreeMap<String,Integer> sorted = new TreeMap<>(bvc);
+		sorted.putAll(map);
+		ArrayList<String> keys = new ArrayList<>();
+		keys.addAll(sorted.keySet());
+		return keys.subList(0, n);
+	}
+
+	/**
+	 * http://stackoverflow.com/questions/109383/how-to-sort-a-mapkey-value-on-the-values-in-java
+	 */
+	private class ValueComparator implements Comparator<String> {
+		private final Map<String, Integer> base;
+
+		public ValueComparator(Map<String, Integer> base) {
+			this.base = base;
+		}
+
+		// Note: this comparator imposes orderings that are inconsistent with equals.
+		public int compare(String a, String b) {
+			if (base.get(a) >= base.get(b)) {
+				return -1;
+			} else {
+				return 1;
+			} // returning 0 would merge keys
+		}
+	}
 }
