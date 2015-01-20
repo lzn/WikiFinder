@@ -2,7 +2,9 @@ package pw.elka.wedt.wikifinder.searcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -17,7 +19,10 @@ import org.apache.lucene.store.FSDirectory;
 
 import pw.elka.wedt.wikifinder.config.ConfigManager;
 
+
 public class LuceneIndexSearcher {
+	private static final int RESULT_NUM = 30;
+	private static final Logger LOG = Logger.getLogger(LuceneIndexSearcher.class);
 	private ConfigManager cm;
 
 	public LuceneIndexSearcher(ConfigManager cm) {
@@ -35,7 +40,7 @@ public class LuceneIndexSearcher {
 
 		Query query = parser.parse(qs);
 
-		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
+		ScoreDoc[] hits = isearcher.search(query, null, RESULT_NUM).scoreDocs;
 		Document[] docs = new Document[hits.length];
 		for (int i = 0; i < hits.length; i++) {
 			int docId = hits[i].doc;
@@ -47,5 +52,20 @@ public class LuceneIndexSearcher {
 		directory.close();
 
 		return docs;
+	}
+
+	public Document[] searchForKeywords(List<String> keywords) throws IOException, ParseException {
+		StringBuilder query = new StringBuilder();
+		int count = 0;
+		for (String string : keywords) {
+			if(count>0){
+				query.append(" OR ");
+			}
+			
+			query.append("title:"+string+" OR text:"+string);
+			count++;
+		}
+		LOG.debug("Prepared query: " + query.toString());
+		return search(query.toString());
 	}
 }

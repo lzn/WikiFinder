@@ -1,8 +1,10 @@
 package pw.elka.wedt.wikifinder.searcher;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import pw.elka.wedt.wikifinder.config.ConfigManager;
@@ -19,6 +21,10 @@ public class WikiSearcher {
 
 				System.out.println(i + "\t" + doc[i].get("title") + "\t"
 						+ doc[i].get("id"));
+				List<IndexableField> fields = doc[i].getFields();
+				for (IndexableField indexableField : fields) {
+					System.out.println("Field: " + indexableField.name() + " Value: " + indexableField.stringValue());
+				}
 			}
 		} else {
 			System.out.println("Podaj co chcesz wyszukać");
