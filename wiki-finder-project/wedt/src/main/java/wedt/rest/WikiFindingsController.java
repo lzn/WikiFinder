@@ -45,8 +45,8 @@ public class WikiFindingsController {
     }
 
     private List<WikiFinder.Finding> getMatches(List<String> keywords) {
-        WikiFinder matcher = new KeywordWikiFinder();
-        // WikiFinder matcher = new ActualWikiFinder(); // TODO: use instead
+     //   WikiFinder matcher = new KeywordWikiFinder();
+        WikiFinder matcher = new ActualWikiFinder(); // TODO: use instead
         return matcher.match(keywords);
     }
 

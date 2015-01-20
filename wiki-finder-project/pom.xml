@@ -8,6 +8,7 @@
   <modules>
   	<module>wiki-indexer</module>
   	<module>wiki-finder</module>
+  	<module>wedt</module>
   </modules>
   <build>
 		<plugins>
