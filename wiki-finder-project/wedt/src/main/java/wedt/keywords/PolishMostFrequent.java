@@ -60,4 +60,6 @@ public class PolishMostFrequent {
 
         LOG.info(new PolishMostFrequent(500).contains("to"));
     }
+
+    // TODO: stem them all
 }
