@@ -15,6 +15,7 @@ import pw.elka.wedt.wikifinder.config.ConfigManager;
 import pw.elka.wedt.wikifinder.searcher.LuceneIndexSearcher;
 
 
+
 public class ActualWikiFinder implements WikiFinder {
 	private static final Logger LOG = Logger.getLogger(ActualFinding.class);
     
@@ -60,7 +61,7 @@ public class ActualWikiFinder implements WikiFinder {
 					
 					 
 					if(matcher.matches()){
-						LOG.info("Name: " + name + " Value: " + value + " Group(0)" + matcher.group(0) + " Group(1)" + matcher.group(1) + " Group(2)" + matcher.group(2));
+						LOG.info("Name: " + name + " Value: " + value + " Group(0): " + matcher.group(0) + " Group(1): " + matcher.group(1) + " Group(2): " + matcher.group(2));
 						Integer level = Integer.valueOf(matcher.group(2));
 						HashMap<String,Integer> m = results.get(level);
 						if(m != null){
@@ -104,7 +105,8 @@ public class ActualWikiFinder implements WikiFinder {
 		sorted.putAll(map);
 		ArrayList<String> keys = new ArrayList<>();
 		keys.addAll(sorted.keySet());
-		return keys.subList(0, n);
+		
+		return keys.size() > n ? keys.subList(0, n) : keys;
 	}
 
 	/**
