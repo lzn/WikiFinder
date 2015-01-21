@@ -17,12 +17,12 @@ import pw.elka.wedt.wikifinder.searcher.LuceneIndexSearcher;
 
 
 public class ActualWikiFinder implements WikiFinder {
+	private static final int TAGS_NUM = 5;
+	private static final String CAT_NAME_PATTERN = "(cat-)(\\d+)";
 	private static final Logger LOG = Logger.getLogger(ActualFinding.class);
     
 	public class ActualFinding implements WikiFinder.Finding {
-        // TODO: representation of a finding by fields + getters
-    	
-    	private final Integer level;
+        private final Integer level;
     	private final List<String> tags;
     	public ActualFinding(Integer level, List<String> tags) {
 			 this.level = level;
@@ -38,30 +38,28 @@ public class ActualWikiFinder implements WikiFinder {
 
     @Override
     public List<Finding> match(List<String> keywords) {
-        //throw new UnsupportedOperationException();
         ConfigManager cm = new ConfigManager();
         
         LuceneIndexSearcher lis = new LuceneIndexSearcher(cm);
         ArrayList<WikiFinder.Finding> finding = new ArrayList<WikiFinder.Finding>();
-        
-      
-        
+ 
         try {
 			Document[] doc = lis.searchForKeywords(keywords);
 			HashMap<Integer, HashMap<String,Integer>> results = new HashMap<Integer, HashMap<String, Integer>>();
 			for (Document document : doc) {
+				String articleTitle = document.getField("title").stringValue();
+				LOG.info("Processing article title: " + articleTitle ); 
+				
 				List<IndexableField> fields = document.getFields();
-				ArrayList<String> cat = new ArrayList<String>();
 				for (IndexableField indexableField : fields) {
 					String name = indexableField.name();
 					String value = indexableField.stringValue();
-					Pattern p = Pattern.compile("(cat-)(\\d+)");
+					Pattern p = Pattern.compile(CAT_NAME_PATTERN);
 					Matcher matcher = p.matcher(name);
 					LOG.debug(matcher.toString());
-					
 					 
 					if(matcher.matches()){
-						LOG.info("Name: " + name + " Value: " + value + " Group(0): " + matcher.group(0) + " Group(1): " + matcher.group(1) + " Group(2): " + matcher.group(2));
+						LOG.info("Article title: " + articleTitle  + " Name: " + name + " Value: " + value);
 						Integer level = Integer.valueOf(matcher.group(2));
 						HashMap<String,Integer> m = results.get(level);
 						if(m != null){
@@ -80,14 +78,21 @@ public class ActualWikiFinder implements WikiFinder {
 						
 					}
 				}
+				
 			}
 
 			for (Entry<Integer, HashMap<String, Integer>> entry : results.entrySet()) {
 				Integer level = entry.getKey();
-				List<String> tags = pick(entry.getValue(), 10);
+				List<String> tags = pick(entry.getValue(), TAGS_NUM);
 				finding.add(new ActualFinding(level, tags));
 			}
 			
+			ArrayList<String> articles = new ArrayList<String>();
+			for(int i=0 ; i<TAGS_NUM ; ++i){
+				
+				articles.add(doc[i].getField("title").stringValue());
+			}
+			finding.add(new ActualFinding(null, articles));
 		} catch (IOException | ParseException e) {
 			LOG.error(e);
 			// TODO: ?
