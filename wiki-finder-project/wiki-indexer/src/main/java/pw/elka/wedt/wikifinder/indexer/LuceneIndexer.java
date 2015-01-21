@@ -2,7 +2,9 @@ package pw.elka.wedt.wikifinder.indexer;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.morfologik.MorfologikAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -21,8 +23,8 @@ public class LuceneIndexer {
 	}
 
 	public void init() throws IOException {
-		Analyzer analyzer = new StandardAnalyzer();
-
+		//Analyzer analyzer = new StandardAnalyzer();
+		Analyzer analyzer = new MorfologikAnalyzer();
 		directory = FSDirectory.open(new File(indexPath));
 		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST,
 				analyzer);
