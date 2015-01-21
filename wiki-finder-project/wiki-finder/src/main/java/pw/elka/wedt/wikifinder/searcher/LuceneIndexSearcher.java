@@ -21,7 +21,7 @@ import pw.elka.wedt.wikifinder.config.ConfigManager;
 
 
 public class LuceneIndexSearcher {
-	private static final int RESULT_NUM = 30;
+	private static final int RESULT_NUM = 10;
 	private static final Logger LOG = Logger.getLogger(LuceneIndexSearcher.class);
 	private ConfigManager cm;
 
