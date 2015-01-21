@@ -2,7 +2,6 @@ package pw.elka.wedt.wikifinder.searcher;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -27,7 +26,7 @@ public class WikiSearcher {
 				}
 			}
 		} else {
-			System.out.println("Podaj co chcesz wyszukać");
+			System.out.println("What you want to search?");
 		}
 
 	}

@@ -3,31 +3,39 @@ package pw.elka.wedt.wikifinder.config;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Properties;
 
 public class ConfigManager {
 	private static final String DEFAULT_CONFIG_PATH = "./wikifinder.properties";
-	HashMap<String, String> config = new HashMap<String, String>();
-	Properties properties;
-	String path;
+	private Properties properties;
+	private String path;
+	public ConfigManager() {
+		try {
+			load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void load() throws IOException {
-		String confPath = this.path == null ? DEFAULT_CONFIG_PATH : this.path;
+		String confPath = path == null ? DEFAULT_CONFIG_PATH : path;
 
 		InputStream is = new FileInputStream(confPath);
 
-		if (this.properties == null) {
-			this.properties = new Properties();
+		if (properties == null) {
+			properties = new Properties();
 		}
-		this.properties.load(is);
+		properties.load(is);
+	}
+	public String getCategorySourceFile() {
+		return properties.getProperty("category-source-file");
 	}
 
 	public String getSourceFile() {
-		return this.properties.getProperty("source-file");
+		return properties.getProperty("source-file");
 	}
 
 	public String getIndexPath() {
-		return this.properties.getProperty("index-path");
+		return properties.getProperty("index-path");
 	}
 }

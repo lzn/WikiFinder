@@ -23,18 +23,19 @@ public class LuceneIndexer {
 	public void init() throws IOException {
 		Analyzer analyzer = new StandardAnalyzer();
 
-		this.directory = FSDirectory.open(new File(this.indexPath));
+		directory = FSDirectory.open(new File(indexPath));
 		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST,
 				analyzer);
-		this.iwriter = new IndexWriter(this.directory, config);
+		iwriter = new IndexWriter(directory, config);
 	}
 
 	public void endIndexer() throws IOException {
-		this.iwriter.close();
-		this.directory.close();
+	
+		iwriter.close();
+		directory.close();
 	}
 
 	public void addDocument(Document doc) throws IOException {
-		this.iwriter.addDocument(doc);
+		iwriter.addDocument(doc);
 	}
 }
