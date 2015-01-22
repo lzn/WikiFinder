@@ -62,20 +62,22 @@ public class ActualWikiFinder implements WikiFinder {
 						LOG.info("Article title: " + articleTitle  + " Name: " + name + " Value: " + value);
 						Integer level = Integer.valueOf(matcher.group(2));
 						HashMap<String,Integer> m = results.get(level);
-						if(m != null){
-							m = results.get(level);
-							if(m.containsKey(value)){
-								m.replace(value, m.get(value) +1 );
-							}else{
-								m.put(value,1);
-							}
+						if(level>0){
+							if(m != null){
+								m = results.get(level);
+								if(m.containsKey(value)){
+									m.replace(value, m.get(value) +1 );
+								}else{
+									m.put(value,1);
+								}
 							
-						}else{
-							m = new HashMap<String, Integer>();
-							m.put(value, 1);
-							results.put(level, m);
-						}
+							}else{
+								m = new HashMap<String, Integer>();
+								m.put(value, 1);
+								results.put(level, m);
+							}
 						
+						}
 					}
 				}
 				
@@ -92,7 +94,7 @@ public class ActualWikiFinder implements WikiFinder {
 				
 				articles.add(doc[i].getField("title").stringValue());
 			}
-			finding.add(new ActualFinding(null, articles));
+			finding.add(new ActualFinding(finding.size()+1, articles));
 		} catch (IOException | ParseException e) {
 			LOG.error(e);
 			// TODO: ?
